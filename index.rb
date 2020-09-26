@@ -1,14 +1,29 @@
 require 'faye/websocket'
+require 'thread'
+require 'redis'
+require 'json'
+require 'erb'
+
 
 module ChatDemo
   class ChatBackend
 
     KEEPALIVE_TIME = 15 # in seconds
-    CHANNEL        = "chat-demo"
+    CHANNEL = ENV["CHANNEL"]
 
     def initialize(app)
       @app = app
       @clients = []
+      uri = URI.parse(ENV["REDIS_URL"])
+      @redis = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+      Thread.new do
+        redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
+        redis_sub.subscribe(CHANNEL) do |on|
+          on.message do |channel, msg|
+            @clients.each {|ws| ws.send(msg) }
+          end
+        end
+      end
     end
 
     def call(env)
@@ -22,7 +37,7 @@ module ChatDemo
         ws.on :message do |event|
           p [:message, event.data]
           ws.send('Pong: ' + event.data)
-          # @redis.publish(CHANNEL, sanitize(event.data))
+          @redis.publish(CHANNEL, sanitize(event.data))
         end
 
         ws.on :close do |event|
@@ -37,6 +52,12 @@ module ChatDemo
       else
         @app.call(env)
       end
+  end
+  private
+  def sanitize(message)
+    json = JSON.parse(message)
+    json.each {|key, value| json[key] = ERB::Util.html_escape(value) }
+    JSON.generate(json)
   end
 end
 end
