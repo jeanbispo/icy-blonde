@@ -1,1 +1,1 @@
-web: ruby index.rb localhost 80
+web: ruby index.rb
