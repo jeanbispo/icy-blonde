@@ -37,7 +37,7 @@ module ChatDemo
         ws.on :message do |event|
           p [:message, event.data]
           ws.send('Pong: ' + event.data)
-          @redis.publish(CHANNEL, sanitize(event.data))
+          @redis.publish(CHANNEL, event.data)
         end
 
         ws.on :close do |event|
