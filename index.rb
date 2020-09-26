@@ -5,6 +5,7 @@ if ARGV.size != 2
   exit(1)
 end
 
+$stderr.puts("Connected to #{ARGV[0]}:#{ARGV[1]}")
 
 EM.run {
   EM::WebSocket.run(:host => ARGV[0], :port => ARGV[1]) do |ws|
@@ -15,7 +16,7 @@ EM.run {
       # path, query_string, origin, headers
 
       # Publish message to the client
-      ws.send "Hello Client, you connected to #{handshake.path}"
+      ws.send "Hello Client, you connected to server"
     }
 
     ws.onclose { puts "Connection closed" }
