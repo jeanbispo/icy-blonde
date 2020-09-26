@@ -20,7 +20,9 @@ module ChatDemo
         redis_sub = Redis.new(host: uri.host, port: uri.port, password: uri.password)
         redis_sub.subscribe(CHANNEL) do |on|
           on.message do |channel, msg|
-            @clients.each {|ws| ws.send(msg) }
+            if msg.include? "response"
+              @clients.each {|ws| ws.send(msg) }
+            end
           end
         end
       end
