@@ -7,10 +7,12 @@
 
 <body>
   <div>
-
+    <pre>
+      Online
+    </pre>
   </div>
   <script>
-    var exampleSocket = new WebSocket("ws://lquiet-anchorage-89996.herokuapp.com");
+    var exampleSocket = new WebSocket("ws://" + window.document.location.host);
     exampleSocket.onopen = function (event) {
       exampleSocket.send("Can you hear me?");
     };
