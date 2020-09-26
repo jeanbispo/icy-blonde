@@ -8,7 +8,7 @@ end
 $stderr.puts("Connected to #{ARGV[0]}:#{ARGV[1]}")
 
 EM.run {
-  EM::WebSocket.run(:host => ARGV[0], :port => ARGV[1]) do |ws|
+  EM::WebSocket.run(:host => ARGV[0], :port => 80) do |ws|
     ws.onopen { |handshake|
       puts "WebSocket connection open"
 
