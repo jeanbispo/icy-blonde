@@ -1,1 +1,1 @@
-web: ruby index.rb localhost $PORT
+web: ruby index.rb localhost 80
